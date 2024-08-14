@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>form </title>
+    <!-- استخدام Bootstrap للتنسيق -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- تنسيق إضافي لتحسين المظهر -->
+    <style>
+    body {
+    padding-top: 40px;
+    direction: rtl; /* تغيير اتجاه النص إلى اليمين */
+    text-align: right; /* محاذاة النص إلى اليمين */
+    font-size: 12pt;
+    font-family: 'Spartan', sans-serif;
+    color: #2A293E;
+    background: url("static/images/form2.jpg") center center no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 100vh;
+    margin: 0; /* إزالة الهوامش */
+    overflow-x: hidden; /* منع التحرك يمينًا ويسارًا */
+    display: grid;
+    align-items: center;
+    justify-items: center;
+}
+
+        .container {
+            background: rgba(255, 255, 255, 0.8); /* شفافية الخلفية البيضاء */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .alert {
+            margin-top: 20px;
+        }
+        .btn-custom {
+            background-color: #935a32; /* لون بني */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 12pt; /* حجم أصغر */
+            letter-spacing: 1px;
+            transition: .2s all ease-in-out;
+            border-bottom: 2px solid transparent;
+            border-radius: 4px;
+        }
+        .btn-custom:hover {
+            background-color: #5C3317; /* لون بني داكن عند التمرير */
+            color: white;
+            border-bottom: 2px solid #7e4b27;
+        }
+        .contact-us {
+            background: #f8f4e5;
+            padding: 50px 100px;
+            border-top: 10px solid #965938;
+        }
+        label, input {
+
+            display: block;
+            width: 100%;
+            font-size: 12pt;
+            line-height: 24pt;
+        }
+        input {
+            margin-bottom: 24pt;
+            border: none;
+            border: 1px solid rgba(0,0,0,.1);
+            border-radius: 2px;
+            background: #f8f4e5;
+            padding-left: 5px;
+            outline: none;
+        }
+        input:focus {
+            border: 1px solid #6bd4b1;
+        }
+        button {
+            display: block;
+            margin: 20px auto; /* جعل الزر في منتصف الصفحة */
+            line-height: 24pt;
+            padding: 0 20px;
+            border: none;
+            outline: none;
+        }
+        ::selection {
+            background: rgb(255, 199, 184);
+        }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus {
+            border: 1px solid #6bd4b1;
+            -webkit-text-fill-color: #2A293E;
+            -webkit-box-shadow: 0 0 0px 1000px #f8f4e5 inset;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="mb-4 text-center"> تحسين البيانات</h2>
+        <p class="lead text-center">
+           لتكامل بيانات الحجاج، يجب أن يحتوي الملف على:
+           <ul>
+                <li>ملف Excel يحتوي على معلومات مثل الهوية الوطنية (ID)، الجنس، والجنسية.</li>
+                <li>مجلد يحتوي على صور مرتبطة بالهوية الوطنية الموجودة في ملف Excel.</li>
+            </ul>
+        </p>
+        <!-- عرض رسائل الفلاش -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="alert alert-warning">
+              {% for message in messages %}
+                <p>{{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        
+        <!-- نموذج الاتصال ورفع الملفات -->
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <!-- نموذج الاتصال -->
+            <div class="contact-us">
+                <label for="customerID">
+                    اسم عامود الهوية الوطنية (ID)
+                    <em>&#x2a;</em>
+                </label>
+                <input type="text" id="customerID" name="customerID" required="">
+                <label for="customerGender">
+                    اسم عامود الجنس (Gender)
+                    <em>&#x2a;</em>
+                </label>
+                <input type="text" id="customerGender" name="customerGender" required="">
+                <label for="customerNationality">
+                    اسم عامود الجنسية (Nationality)
+                    <em>&#x2a;</em>
+                </label>
+                <input type="text" id="customerNationality" name="customerNationality" required="">
+                <label for="customerAge">اسم عامود العمر (Age)</label>
+                <input type="text" id="customerAge" name="customerAge">
+                <label for="customerBirthdate">اسم عامود تاريخ الميلاد (Birthdate)</label>
+                <input type="text" id="customerBirthdate" name="customerBirthdate">
+                <label for="file">اختر ملف ZIP:</label>
+                <input type="file" class="form-control-file" id="file" name="file" accept=".zip" required="">
+            
+            </div>
+            
+            <!-- زر لفتح نافذة سياسة الخصوصية -->
+            <button type="button" id="privacyPolicyBtn" class="btn btn-custom">إرسال</button>
+        </form>
+    </div>
+
+    <!-- نافذة سياسة الخصوصية -->
+    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="privacyModalLabel">سياسة الخصوصية</h5>
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- نص سياسة الخصوصية -->
+            <p>
+                <strong>سياسة الخصوصية لمنصة تكامل</strong>
+            </p>
+            <p>
+                نحن في منصة تكامل نولي أهمية قصوى لحماية خصوصية بيانات الحجاج والمعتمرين التي يتم جمعها ومعالجتها من خلال خدماتنا. نلتزم بالحفاظ على سرية وأمان جميع البيانات الشخصية والمعلومات الحساسة التي تقدمها الجهات المتعاقدة معنا.
+            </p>
+            
+            <p>
+                <strong>جمع البيانات</strong>
+            </p>
+            <p>
+                نقوم بجمع البيانات الشخصية الضرورية لتقديم خدماتنا بكفاءة، مثل:
+            </p>
+            <ul>
+                <li>الاسم الكامل</li>
+                <li>رقم الهوية الوطنية أو جواز السفر</li>
+                <li>معلومات الاتصال (رقم الهاتف والبريد الإلكتروني)</li>
+                <li>الصور الفوتوغرافية وبيانات التعرف على الوجه</li>
+                <li>البيانات المتعلقة بالجنس والجنسية</li>
+            </ul>
+            
+            <p>
+                <strong>استخدام البيانات</strong>
+            </p>
+            <p>
+                تُستخدم البيانات التي نجمعها للأغراض التالية:
+            </p>
+            <ul>
+                <li>تحسين جودة الخدمات المقدمة للحجاج والمعتمرين</li>
+                <li>التحقق من الهوية وضمان تطابق البيانات مع الواقع</li>
+                <li>تحسين تجربة المستخدم من خلال تخصيص الخدمات بناءً على البيانات المقدمة</li>
+                <li>توفير خدمات متقدمة تعتمد على البيانات مثل تحليل المراجعات وتحسين البيانات</li>
+            </ul>
+            
+            <p>
+                <strong>حماية البيانات</strong>
+            </p>
+            <p>
+                نلتزم باتخاذ كافة الإجراءات الفنية والتنظيمية اللازمة لحماية بياناتك من الوصول غير المصرح به أو التغيير أو الإفشاء أو التدمير. تشمل هذه الإجراءات:
+            </p>
+            <ul>
+                <li>تشفير البيانات أثناء النقل والتخزين</li>
+                <li>تقييد الوصول إلى البيانات على الموظفين المصرح لهم فقط</li>
+                <li>مراجعة دورية لإجراءات الأمن وضمان توافقها مع أفضل المعايير العالمية</li>
+            </ul>
+            
+            <p>
+                <strong>مشاركة البيانات</strong>
+            </p>
+            <p>
+                لن نقوم بمشاركة بياناتك مع أطراف ثالثة إلا في الحالات التالية:
+            </p>
+            <ul>
+                <li>الحصول على موافقتك المسبقة</li>
+                <li>التزامًا بمتطلبات قانونية أو تنظيمية</li>
+                <li>تقديم الخدمات من خلال شركاء معتمدين ومتعاقدين معنا</li>
+            </ul>
+            
+            <p>
+                <strong>حقوق المستخدم</strong>
+            </p>
+            <p>
+                لديك الحق في:
+            </p>
+            <ul>
+                <li>الوصول إلى البيانات الشخصية التي نحتفظ بها</li>
+                <li>تصحيح البيانات غير الدقيقة أو غير المكتملة</li>
+                <li>طلب حذف البيانات التي لم نعد بحاجة إليها</li>
+                <li>الاعتراض على معالجة بياناتك لأسباب مشروعة</li>
+            </ul>
+             <!-- نصوص سياسة الخصوصية الأخرى -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+            <button type="button" id="agreeBtn" class="btn btn-primary">أوافق</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    
+    <footer id="fh5co-footer" role="contentinfo">
+     
+    
+            <div class="row copyright">
+                <div class="col-md-12 text-center">
+                    <p>
+                        <small class="block">&copy; منصة تكامل التقنية </small> 
+                  </p>
+                    <p>
+                      
+                    </p>
+                </div>
+            </div>
+    
+        </div>
+    </footer>
+    </div>
+    
+    <div class="gototop js-top">
+        <a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
+    </div>
+    
+    <!-- تحميل مكتبات JavaScript لـ Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- تعديل زر "أوافق" بحيث يرسل النموذج عند الضغط -->
+    <script>
+        document.getElementById('privacyPolicyBtn').addEventListener('click', function() {
+            $('#privacyModal').modal('show');
+        });
+
+        document.getElementById('agreeBtn').addEventListener('click', function() {
+            $('#privacyModal').modal('hide');
+            document.querySelector('form').submit();
+        });
+    </script>
+
+</body>
+</html>

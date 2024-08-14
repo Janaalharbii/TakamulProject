@@ -1,0 +1,9 @@
+torchtext
+flask 
+torch 
+pandas 
+PyArabic
+emoji
+openpyxl
+pandas
+numpy
