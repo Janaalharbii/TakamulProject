@@ -4,7 +4,6 @@ joblib
 pandas
 opencv-python
 numpy
-face_recognition
 Pillow
 Werkzeug
 requests
