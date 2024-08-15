@@ -4,7 +4,7 @@ joblib
 pandas
 opencv-python
 numpy
-dlib
+dlib==19.22.1
 Pillow
 Werkzeug
 requests
