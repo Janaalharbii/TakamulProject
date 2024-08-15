@@ -209,3 +209,69 @@ def upload_file():
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('لم يتم تحديد الملفات')
+                    if 'file' not in request.files:
+            flash('لم يتم تحديد الملفات بشكل صحيح.')
+            print("File part missing in request.")
+            return redirect(request.url)
+
+        file = request.files['file']
+        if file.filename == '' or not allowed_file(file.filename):
+            flash('لم يتم تحديد الملفات أو نوع الملفات غير صحيح.')
+            print("No file selected or invalid file type.")
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):
+            id_column = request.form.get('customerID')
+            gender_column = request.form.get('customerGender')
+            nationality_column = request.form.get('customerNationality')
+            age_column = request.form.get('customerAge')
+            birthdate_column = request.form.get('customerBirthdate')
+
+            if not id_column or not gender_column or not nationality_column:
+                flash('يجب ملء جميع الحقول المطلوبة.')
+                return redirect(request.url)
+
+            filename = secure_filename(file.filename)
+            zip_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(zip_path)
+            print(f"File {filename} saved successfully.")
+
+            process_zip_file(zip_path, id_column, gender_column, nationality_column, age_column, birthdate_column)
+
+            flash('تم معالجة الملفات بنجاح.')
+            return redirect(url_for('download_processed'))
+
+    return render_template('feu1.html')
+
+@app.route('/download_processed', methods=['GET'])
+def download_processed():
+    zip_path = os.path.join(app.config['PROCESSED_FOLDER'], 'ProcessedData.zip')
+    if not os.path.exists(zip_path):
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for root, dirs, files in os.walk(app.config['PROCESSED_DATA_FOLDER']):
+                for file in files:
+                    zipf.write(os.path.join(root, file),
+                               os.path.relpath(os.path.join(root, file),
+                               os.path.join(app.config['PROCESSED_DATA_FOLDER'], '..')))
+    return send_file(zip_path, as_attachment=True, download_name='ProcessedData.zip')
+
+def delete_uploads_folder():
+    folder = app.config['UPLOAD_FOLDER']
+    if os.path.exists(folder):
+        shutil.rmtree(folder)
+        print("Uploads folder has been deleted.")
+    os.makedirs(folder)
+
+if __name__ == '__main__':
+    signal.signal(signal.SIGTERM, handle_sigterm)
+    signal.signal(signal.SIGINT, handle_sigterm)
+
+    try:
+        for folder in [UPLOAD_FOLDER, PROCESSED_FOLDER, PROCESSED_DATA_FOLDER, INVALID_FOLDER, VALID_FOLDER, VALID_IMAGES_FOLDER]:
+            if not os.path.exists(folder):
+                os.makedirs(folder)
+        
+        app.run(debug=True)
+    finally:
+        delete_uploads_folder()
+
