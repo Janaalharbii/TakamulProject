@@ -1,9 +1,12 @@
-torchtext
-flask 
-torch 
-pandas 
-PyArabic
+Flask
+Gunicorn
+joblib
 pandas
+opencv-python
 numpy
-gunicorn
+dlib
+Pillow
+Werkzeug
+requests
+
 
