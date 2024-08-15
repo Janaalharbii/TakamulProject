@@ -4,11 +4,7 @@ joblib
 pandas
 opencv-python
 numpy
-dlib==19.22.1
+face_recognition
 Pillow
 Werkzeug
 requests
-face_recognition
-
-
-
