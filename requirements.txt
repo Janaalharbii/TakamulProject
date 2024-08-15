@@ -8,5 +8,7 @@ dlib==19.22.1
 Pillow
 Werkzeug
 requests
+face_recognition
+
 
 
