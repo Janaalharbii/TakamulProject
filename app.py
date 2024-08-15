@@ -208,4 +208,4 @@ def upload_file():
     print("Handling a new request.")
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('لم يتم تحديد الملفات
+            flash('لم يتم تحديد الملفات')
