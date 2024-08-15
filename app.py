@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import cv2
 import numpy as np
-import dlib
+import face_recognition
 from PIL import Image
 from werkzeug.utils import secure_filename
 import zipfile
@@ -28,11 +28,9 @@ app.config['INVALID_FOLDER'] = INVALID_FOLDER
 app.config['VALID_FOLDER'] = VALID_FOLDER
 app.config['VALID_IMAGES_FOLDER'] = VALID_IMAGES_FOLDER
 
-detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
-
 API_URL = 'https://api.picsart.io/tools/1.0/enhance/face'
-API_KEY = "eyJraWQiOiI5NzIxYmUzNi1iMjcwLTQ5ZDUtOTc1Ni05ZDU5N2M4NmIwNTEiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhdXRoLXNlcnZpY2UtZWIzN2E2ZmItZjY2Ny00Njg3LWFjZTctNTMyY2RiZTM0MDhlIiwiYXVkIjoiNDYxMzMzMjg4MDAwMTAxIiwibmJmIjoxNzIzNjM3NDAxLCJzY29wZSI6WyJiMmItYXBpLmdlbl9haSIsImIyYi1hcGkuaW1hZ2VfYXBpIl0sImlzcyI6Imh0dHBzOi8vYXBpLnBpY3NhcnQuY29tL3Rva2VuLXNlcnZpY2UiLCJvd25lcklkIjoiNDYxMzMzMjg4MDAwMTAxIiwiaWF0IjoxNzIzNjM3NDAxLCJqdGkiOiJlZjJlY2QyZC01NmUxLTRjMjgtYTI5OC05OTVlODNhMTRhYWIifQ.W5fnYmKnLFM9o16LM1cxPiCqoQLfz7M7csoWqQXKPar-oNY6jxIIO2uu0n9vbWwij6E1aVAXKtHb2NC8hhQ5rTszlCHOnQveJvsW2kbzw3TtpVGJ_o92sS1hAzORSQyrHdxUPmG8-n039OxrK55w8pfXHTqhUUffnZEbVx1bI4xycacw8Iuvx9dcGTAWb7XsrLNdkbrBhbKdN1e0IXA79FCb4ZrSrB8tLgVCKJ3lQ5mPgMAawTN9R6-7pSLsSUA7sRAdJpL7pQwxUAyHrTFmn5kchCx4JsZJ4Y0RTxfw4uAwUemfvv1fScigZmGZbXo0FIE8NlAZylGiquyPv41tSA"
+API_KEY = "YOUR_API_KEY"
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -158,7 +156,7 @@ def correct_orientation(image_path, output_path):
 
     for angle in angles:
         rotated_image = image if angle == 0 else cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
-        landmarks = detect_landmarks(rotated_image, detector, predictor)
+        landmarks = detect_landmarks(rotated_image)
         
         if landmarks is not None:
             if angle != 0:
@@ -171,15 +169,14 @@ def correct_orientation(image_path, output_path):
     else:
         print("No landmarks detected; image not saved.")
 
-def detect_landmarks(image, detector, predictor):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    rects = detector(gray, 1)
-
-    if len(rects) > 0:
-        for rect in rects:
-            shape = predictor(gray, rect)
-            shape = np.array([[p.x, p.y] for p in shape.parts()])
-            return shape
+def detect_landmarks(image):
+    # استخدم face_recognition لتحديد المعالم
+    face_landmarks_list = face_recognition.face_landmarks(image)
+    
+    if face_landmarks_list:
+        # إعادة المعالم كقائمة نقاط
+        landmarks = np.array([[(point[0], point[1]) for feature in face_landmarks_list[0].values() for point in feature]])
+        return landmarks
     return None
 
 def check_duplicates(df, images_folder, invalid_folder):
