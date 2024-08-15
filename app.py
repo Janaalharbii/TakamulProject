@@ -208,8 +208,6 @@ def upload_file():
     print("Handling a new request.")
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('لم يتم تحديد الملفات')
-                    if 'file' not in request.files:
             flash('لم يتم تحديد الملفات بشكل صحيح.')
             print("File part missing in request.")
             return redirect(request.url)
@@ -274,4 +272,3 @@ if __name__ == '__main__':
         app.run(debug=True)
     finally:
         delete_uploads_folder()
-
